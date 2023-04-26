@@ -1,21 +1,33 @@
 <script lang="ts" setup>
-const streamStore = useStreamStore()
+const mediaDevicesStore = useMediaDevicesStore()
 const streamerPeer = useStreamerPeerStore()
 const router = useRouter()
 
 const id = ref("")
+const noMediaStream = ref(false)
 
 const onStreamStart = async () => {
-    if (streamStore.stream != null) {
-        await streamerPeer.createPeerWithId(id.value, streamStore.stream)
+    if (mediaDevicesStore.stream != null) {
+        noMediaStream.value = false
+        await streamerPeer.createPeerWithId(id.value, mediaDevicesStore.stream)
         router.push('/stream/broadcast')
     } else {
-        alert('todo')
+        noMediaStream.value = true
     }
 }
 </script>
 
 <template>
+<VAlert
+    :model-value="noMediaStream"
+    type="warning"
+>
+    <VContainer fluid>
+        <p class="text-center">
+            Отсутствует медиа-поток, проверьте выбраны ли медиа-устройства.
+        </p>
+    </VContainer>
+</VAlert>
 <VMain>
     <VRow class="fill-height" align="center">
         <VCol>
@@ -36,7 +48,7 @@ const onStreamStart = async () => {
             <p class="text-center text-h3">
                 Предпросмотр
             </p>
-            <Player :stream="streamStore.stream" :key="streamStore.stream?.id"/>
+            <Player :stream="mediaDevicesStore.stream" :key="mediaDevicesStore.stream?.id"/>
         </VCol>
     </VRow>
 </VMain>

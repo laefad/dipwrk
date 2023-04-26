@@ -1,63 +1,43 @@
 <script lang="ts" setup>
-const streamStore = useStreamStore()
-
-const videoInputs = ref<MediaDeviceInfo[]>([])
-const audioInputs = ref<MediaDeviceInfo[]>([])
-const audioOutputs = ref<MediaDeviceInfo[]>([])
-
-const notifyAboutPermission = ref(false)
-
-onMounted(async () => {
-    navigator.mediaDevices.getUserMedia({audio: true, video: true}).then(async () => {
-        const mediaDevices = await navigator.mediaDevices.enumerateDevices()
-        videoInputs.value = mediaDevices.filter(mdi => mdi.kind == 'videoinput')
-        audioInputs.value = mediaDevices.filter(mdi => mdi.kind == 'audioinput')
-        audioOutputs.value = mediaDevices.filter(mdi => mdi.kind == 'audiooutput')
-    }).catch(() => {
-        notifyAboutPermission.value = true
-    })
-})
-
+const mediaDevicesStore = useMediaDevicesStore()
 </script>
+
+
 <template>
 <VAlert 
-    v-if="notifyAboutPermission" 
+    :model-value="mediaDevicesStore.mediaIsUnavailable" 
     type="warning"
 >
     <VContainer fluid>
         <p class="text-center">
             Разрешите доступ к камере и микрофону для дальнейшей работы
         </p>
-        <VImg>
-            <template #placeholder>
-                <p class="text-center">
-                    Тут могла бы быть картинка
-                </p>
-            </template>
-        </VImg>
+        <VImg
+            src="/images/mediaPermissions.png"
+        ></VImg>
     </VContainer>
 </VAlert>
 <VContainer fluid>
     <VSelect
         label="Выберите источник видео"
-        v-model="streamStore.devices.videoInput"
-        :items="videoInputs"
+        v-model="mediaDevicesStore.devices.videoInput"
+        :items="mediaDevicesStore.videoInputs"
         item-title="label"
         item-value="deviceId"
         return-object
     ></VSelect>
     <VSelect
         label="Выберите источник аудио"
-        v-model="streamStore.devices.audioInput"
-        :items="audioInputs"
+        v-model="mediaDevicesStore.devices.audioInput"
+        :items="mediaDevicesStore.audioInputs"
         item-title="label"
         item-value="deviceId"
         return-object
     ></VSelect>
     <VSelect
-        label="Выберите устройство вывода аудио"
-        v-model="streamStore.devices.audioOutput"
-        :items="audioOutputs"
+        label="Выберите устройство вывода аудио(неактивно)"
+        v-model="mediaDevicesStore.devices.audioOutput"
+        :items="mediaDevicesStore.audioOutputs"
         item-title="label"
         item-value="deviceId"
         return-object
