@@ -1,6 +1,7 @@
 import { TreeChangesListener } from './treeChangesListener'
 import { Node } from './node'
-import { AvlTree as AvlTreeApi, CompareFunction } from './types'
+
+export type CompareFunction<K> = (a: K, b: K) => number
 
 const enum BalanceState {
     /** Right child's height is 2+ greater than left child's height */
@@ -15,26 +16,25 @@ const enum BalanceState {
     UNBALANCED_LEFT
 }
 
-export class AvlTree<K, V> implements AvlTreeApi<K, V> {
+export class AvlTree<K, V> {
     protected _root: Node<K, V> | null = null
     private _size: number = 0
-    private _compare: CompareFunction<K>
 
     constructor(
         private _listener: TreeChangesListener<V>,
-        compare?: CompareFunction<K>
+        private _compare: CompareFunction<K> = AvlTree._defaultCompare<K>
     ) {
-        this._compare = compare ?? this._defaultCompare
+
     }
 
-    private _defaultCompare(a: K, b: K): number {
+    private static _defaultCompare<K>(a: K, b: K): number {
         if (a > b) {
-            return 1;
+            return 1
         }
         if (a < b) {
-            return -1;
+            return -1
         }
-        return 0;
+        return 0
     }
 
     private set root(node: Node<K, V> | null) {
@@ -66,44 +66,42 @@ export class AvlTree<K, V> implements AvlTreeApi<K, V> {
         }
 
         if (this._compare(key, root.key) < 0) {
-            root.left = this._insert(key, value, root.left);
+            root.left = this._insert(key, value, root.left)
         } else if (this._compare(key, root.key) > 0) {
-            root.right = this._insert(key, value, root.right);
+            root.right = this._insert(key, value, root.right)
         } else {
             // It's a duplicate so insertion failed, decrement size to make up for it
-            this._size--;
-            return root;
+            this._size--
+            return root
         }
 
         // Update height and rebalance tree
-        root.height = Math.max(root.leftHeight, root.rightHeight) + 1;
-        const balanceState = this._getBalanceState(root);
-
-        console.log(`Balance state after insertion = ${balanceState}`)
+        root.height = Math.max(root.leftHeight, root.rightHeight) + 1
+        const balanceState = this._getBalanceState(root)
 
         if (balanceState === BalanceState.UNBALANCED_LEFT) {
             if (this._compare(key, root.left!.key) < 0) {
                 // Left left case
-                root = root.rotateRight();
+                root = root.rotateRight()
             } else {
                 // Left right case
-                root.left = root.left!.rotateLeft();
-                return root.rotateRight();
+                root.left = root.left!.rotateLeft()
+                return root.rotateRight()
             }
         }
 
         if (balanceState === BalanceState.UNBALANCED_RIGHT) {
             if (this._compare(key, root.right!.key) > 0) {
                 // Right right case
-                root = root.rotateLeft();
+                root = root.rotateLeft()
             } else {
                 // Right left case
-                root.right = root.right!.rotateRight();
-                return root.rotateLeft();
+                root.right = root.right!.rotateRight()
+                return root.rotateLeft()
             }
         }
 
-        return root;
+        return root
     }
 
     public delete(key: K): void {
@@ -117,31 +115,31 @@ export class AvlTree<K, V> implements AvlTreeApi<K, V> {
         root: Node<K, V> | null
     ): Node<K, V> | null {
 
-        if (root === null) {
-            this._size++;
-            return root;
+        if (root == null) {
+            this._size++
+            return root
         }
 
         if (this._compare(key, root.key) < 0) {
             // The key to be deleted is in the left sub-tree
-            root.left = this._delete(key, root.left);
+            root.left = this._delete(key, root.left)
         } else if (this._compare(key, root.key) > 0) {
             // The key to be deleted is in the right sub-tree
-            root.right = this._delete(key, root.right);
+            root.right = this._delete(key, root.right)
         } else {
             // root is the node to be deleted
             if (root.left == null && root.right == null) {
-                root = null;
+                root = null
             } else if (root.left == null && root.right) {
-                root = root.right;
+                root = root.right
             } else if (root.left && root.right == null) {
-                root = root.left;
+                root = root.left
             } else {
                 // Node has 2 children, get the in-order successor
-                const inOrderSuccessor = this._minValueNode(root.right!);
-                root.key = inOrderSuccessor.key;
-                root.value = inOrderSuccessor.value;
-                root.right = this._delete(inOrderSuccessor.key, root.right);
+                const inOrderSuccessor = this._minValueNode(root.right!)
+                root.key = inOrderSuccessor.key
+                root.value = inOrderSuccessor.value
+                root.right = this._delete(inOrderSuccessor.key, root.right)
             }
         }
 
@@ -150,8 +148,8 @@ export class AvlTree<K, V> implements AvlTreeApi<K, V> {
         }
 
         // Update height and rebalance tree
-        root.height = Math.max(root.leftHeight, root.rightHeight) + 1;
-        const balanceState = this._getBalanceState(root);
+        root.height = Math.max(root.leftHeight, root.rightHeight) + 1
+        const balanceState = this._getBalanceState(root)
 
         if (balanceState == BalanceState.UNBALANCED_LEFT) {
             // Left left case
@@ -159,12 +157,12 @@ export class AvlTree<K, V> implements AvlTreeApi<K, V> {
                 this._getBalanceState(root.left!) === BalanceState.BALANCED ||
                 this._getBalanceState(root.left!) === BalanceState.SLIGHTLY_UNBALANCED_LEFT
             ) {
-                return root.rotateRight();
+                return root.rotateRight()
             }
             // Left right case
             // this._getBalanceState(root.left) === BalanceState.SLIGHTLY_UNBALANCED_RIGHT
-            root.left = (root.left!).rotateLeft();
-            return root.rotateRight();
+            root.left = (root.left!).rotateLeft()
+            return root.rotateRight()
         }
 
         if (balanceState == BalanceState.UNBALANCED_RIGHT) {
@@ -173,18 +171,16 @@ export class AvlTree<K, V> implements AvlTreeApi<K, V> {
                 this._getBalanceState(root.right!) == BalanceState.BALANCED ||
                 this._getBalanceState(root.right!) == BalanceState.SLIGHTLY_UNBALANCED_RIGHT
             ) {
-                return root.rotateLeft();
+                return root.rotateLeft()
             }
             // Right left case
             // this._getBalanceState(root.right) === BalanceState.SLIGHTLY_UNBALANCED_LEFT
-            root.right = (root.right!).rotateRight();
-            return root.rotateLeft();
+            root.right = (root.right!).rotateRight()
+            return root.rotateLeft()
         }
 
-        return root;
+        return root
     }
-
-    // reworked snizu
 
     public get(key: K): V | undefined | null {
         return this.root 

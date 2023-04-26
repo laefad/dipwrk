@@ -24,7 +24,7 @@ export const useViewerPeer = defineStore('viewer-peer', () => {
     const selfId = ref("")
     const channelId = ref("")
     const options = ref<PeerJSOption>(defaultPeerOptions)
-    // For video-player update trigger after changin media source
+    // For video-player refresh trigger after after media source change
     const streamKey = ref<string>("")
     const mediaStream = computed<MediaStream | null>({
         get() {
@@ -47,31 +47,28 @@ export const useViewerPeer = defineStore('viewer-peer', () => {
             _peer.value.destroy()
         await _createPeerJs(selfId.value, options.value)
         if (channelId.value != "") {
-            // TODO i hope that i dont need to send newchannel inner
             _connectToChannel()
         }
     }
 
     // only selfId and options saved
-    // TODO i think this is doesnt work
-    // const disconnect = () => {
-    //     channelId.value = ""
-    //     _connections.left?.close()
-    //     _connections.right?.close()
-    //     _connections.left = null
-    //     _connections.right = null
-    //     _rootConnection.value?.close()
-    //     _rootConnection.value = null
-    //     mediaStream.value = null
-    //     streamKey.value = ""
+    const clear = () => {
+        channelId.value = ""
+        _connections.left?.close()
+        _connections.right?.close()
+        _connections.left = null
+        _connections.right = null
+        _rootConnection.value?.close()
+        _rootConnection.value = null
+        mediaStream.value = null
+        streamKey.value = ""
 
-    //     if (_peer.value)
-    //         _peer.value.destroy()
-    // }
+        if (_peer.value)
+            _peer.value.destroy()
+    }
 
     const _createPeerJs = async (id: string, options: PeerJSOption) => {
-        // const peerjs = (await import('peerjs')).default
-
+        // Destroy previous peer 
         if (_peer.value)
             _peer.value.destroy()
 
@@ -92,12 +89,10 @@ export const useViewerPeer = defineStore('viewer-peer', () => {
 
                 // close leaf connection if this is new root 
                 if (mediaConnection.peer == _connections.left?.peer) {
-                    // _connections.left.()
                     _connections.left.close()
                     _connections.left = null
                 }
                 if (mediaConnection.peer == _connections.right?.peer) {
-                    // _connections.right.removeAllListeners()
                     _connections.right.close()
                     _connections.right = null
                 }
@@ -109,7 +104,6 @@ export const useViewerPeer = defineStore('viewer-peer', () => {
 
                 mediaConnection.on('close', () => {
                     console.log(`Stream ended from root`)
-                    // Maybe close event emits after new stream ?
                     mediaStream.value = null
                     _rootConnection.value = null
                 })
@@ -141,7 +135,10 @@ export const useViewerPeer = defineStore('viewer-peer', () => {
         return new Promise((resolve, reject) => {
             if (_peer.value) {
                 console.log(`Send disconnect notification to channel ${channelId.value}`)
+
+                // Will be closed by streamer pier
                 const connection = _peer.value.connect(channelId.value)
+
                 connection.on('open', () => {
                     connection.send({
                         type: 'peerDisconnected',
@@ -158,15 +155,12 @@ export const useViewerPeer = defineStore('viewer-peer', () => {
     const _sendRequestToChannel = () => {
         if (_peer.value) {
             console.log(`Send request to channel ${channelId.value}`)
-            const connection = _peer.value.connect(channelId.value)
 
-            // connection.on('iceStateChanged', (state) => {
-            //     console.log('icestateChanged', state)
-            // })
+            // Will be closed by streamer pier
+            const connection = _peer.value.connect(channelId.value)
 
             connection.on('open', () => {
                 console.log('connection opened with streamer')
-                // TODO need to close connection?
                 connection.send({
                     type: 'connectToStream'
                 } as PeerMessage)
@@ -179,10 +173,11 @@ export const useViewerPeer = defineStore('viewer-peer', () => {
     const _sendNotifyAboutDisconnect = (disconnectedPeerId: string) => {
         if (_peer.value) {
             console.log(`Send notify about '${disconnectedPeerId}' disconnected from channel '${channelId.value}'`)
+
+            // Will be closed by streamer pier
             const connection = _peer.value.connect(channelId.value)
 
             connection.on('open', () => {
-                // TODO need to close connection?
                 connection.send({
                     type: 'peerDisconnected',
                     peerId: disconnectedPeerId
@@ -201,24 +196,11 @@ export const useViewerPeer = defineStore('viewer-peer', () => {
                 const mediaConnection = _peer.value.call(leafPeerId, mediaStream.value)
                 _connections[leafType] = mediaConnection
 
-                // TODO doesnt work ??
                 mediaConnection.on('close', () => {
                     console.log(`${leafType} leaf '${leafPeerId}' diconnected`)
                     _connections[leafType] = null
                     _sendNotifyAboutDisconnect(leafPeerId)
                 })
-
-                mediaConnection.on('error', (error) => {
-                    console.log('error', error)
-                })
-
-                // mediaConnection.on('iceStateChanged', (state) => {
-                //     if (state == 'disconnected') {
-                //         console.log('ice state disconnected')
-                //         _connections[leafType] = null
-                //         _sendNotifyAboutDisconnect(leafPeerId)
-                //     }
-                // })
 
                 printState()
             } else {
@@ -237,5 +219,8 @@ export const useViewerPeer = defineStore('viewer-peer', () => {
         })
     }
 
-    return { selfId, channelId, options, mediaStream, streamKey, connectToChannel, sendDisconnectNotificationToChannel }
+    return { 
+        selfId, channelId, options, mediaStream, streamKey, 
+        clear, connectToChannel, sendDisconnectNotificationToChannel 
+    }
 })

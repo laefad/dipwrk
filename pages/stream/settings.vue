@@ -1,10 +1,17 @@
 <script lang="ts" setup>
+import { mdiDice5Outline } from '@mdi/js'
+
 const mediaDevicesStore = useMediaDevicesStore()
 const streamerPeer = useStreamerPeer()
 const router = useRouter()
 
 const id = ref("")
 const noMediaStream = ref(false)
+const uuid = ref(new UUID())
+
+const generateUUID = () => {
+    id.value = uuid.value.generate()
+}
 
 const onStreamStart = async () => {
     if (mediaDevicesStore.stream != null) {
@@ -36,6 +43,8 @@ const onStreamStart = async () => {
             <VContainer fluid>
                 <VTextField
                     v-model="id"
+                    :append-icon="mdiDice5Outline"
+                    @click:append="generateUUID()"
                     label="Введите свой индентификатор"
                 ></VTextField>
             </VContainer>

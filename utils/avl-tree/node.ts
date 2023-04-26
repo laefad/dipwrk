@@ -87,7 +87,7 @@ export class Node<K, V> {
      */
     public get leftHeight(): number {
         if (this.left === null) {
-            return -1;
+            return -1
         }
         return this.left.height ?? 0
     }
@@ -99,7 +99,7 @@ export class Node<K, V> {
      */
     public get rightHeight(): number {
         if (this.right === null) {
-            return -1;
+            return -1
         }
         return this.right.height ?? 0
     }
