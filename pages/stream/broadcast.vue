@@ -1,17 +1,16 @@
 <script lang="ts" setup>
 const mediaDevicesStore = useMediaDevicesStore()
-const streamerPeerStore = useStreamerPeerStore()
+const streamerPeer = useStreamerPeer()
 const router = useRouter()
 
 onMounted(() => {
-    if (mediaDevicesStore.stream == null || streamerPeerStore.peer == null) {
+    if (mediaDevicesStore.stream == null || streamerPeer.destroyed ) {
         router.push('/stream/settings')
     }
 })
 
 onBeforeUnmount(() => {
-    streamerPeerStore.peer?.destroy()
-    streamerPeerStore.peer = null
+    streamerPeer.disconnect()
 })
 </script>
 
@@ -21,7 +20,7 @@ onBeforeUnmount(() => {
     <VRow class="fill-height" align="center">
         <VCol>
             <p class="text-center text-h3">
-                Страница трансляции пира {{ streamerPeerStore.id }}
+                Страница трансляции пира {{ streamerPeer.id }}
             </p>
             <Player :stream="mediaDevicesStore.stream" :key="mediaDevicesStore.stream?.id"/>
         </VCol>

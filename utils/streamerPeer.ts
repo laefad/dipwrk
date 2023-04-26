@@ -4,16 +4,6 @@ import type { Leaf, PeerMessage } from './peerMessage'
 import { AvlTree } from './avl-tree/tree'
 import { TreeChangesListener } from './avl-tree/treeChangesListener'
 
-export const reversedCompare = (time1: number, time2: number): number => {
-    if (time1 > time2) {
-        return -1
-    }
-    if (time1 < time2) {
-        return 1
-    }
-    return 0
-}
-
 export class StreamerPeer {
 
     private static inactivityTime = 10000
@@ -29,7 +19,7 @@ export class StreamerPeer {
         private _mediaStream: MediaStream | null
     ) {
         this._listener = new TreeChangesListener()
-        this._peerTree = new AvlTree(this._listener, reversedCompare)
+        this._peerTree = new AvlTree(this._listener, reversedNumberCompare)
         this._peerTreeDict = new Map()
 
         // peer init
@@ -37,22 +27,6 @@ export class StreamerPeer {
         this._peer.on('connection', (connection) => {
 
             console.log(`${connection.peer} connected to streamer`)
-
-            connection.on('open', () => {
-                console.log('connection open')
-            })
-
-            connection.on('error', (error) => {
-                console.log('connection error', error)
-            })
-
-            connection.on('close', () => {
-                console.log('connection close')
-            })
-
-            // connection.on('iceStateChanged', (state) => {
-            //     console.log('icestateChanged', state)
-            // })
 
             const anotherPeer: PeerTreeData = {
                 id: connection.peer,

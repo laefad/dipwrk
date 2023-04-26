@@ -54,20 +54,20 @@ export const useViewerPeer = defineStore('viewer-peer', () => {
 
     // only selfId and options saved
     // TODO i think this is doesnt work
-    const disconnect = () => {
-        channelId.value = ""
-        _connections.left?.close()
-        _connections.right?.close()
-        _connections.left = null
-        _connections.right = null
-        _rootConnection.value?.close()
-        _rootConnection.value = null
-        mediaStream.value = null
-        streamKey.value = ""
+    // const disconnect = () => {
+    //     channelId.value = ""
+    //     _connections.left?.close()
+    //     _connections.right?.close()
+    //     _connections.left = null
+    //     _connections.right = null
+    //     _rootConnection.value?.close()
+    //     _rootConnection.value = null
+    //     mediaStream.value = null
+    //     streamKey.value = ""
 
-        if (_peer.value)
-            _peer.value.destroy()
-    }
+    //     if (_peer.value)
+    //         _peer.value.destroy()
+    // }
 
     const _createPeerJs = async (id: string, options: PeerJSOption) => {
         // const peerjs = (await import('peerjs')).default
@@ -137,12 +137,28 @@ export const useViewerPeer = defineStore('viewer-peer', () => {
         }
     }
 
+    const sendDisconnectNotificationToChannel = () => {
+        return new Promise((resolve, reject) => {
+            if (_peer.value) {
+                console.log(`Send disconnect notification to channel ${channelId.value}`)
+                const connection = _peer.value.connect(channelId.value)
+                connection.on('open', () => {
+                    connection.send({
+                        type: 'peerDisconnected',
+                        peerId: selfId.value
+                    } as PeerMessage)
+                })
+                connection.on('close', () => resolve(null))
+            } else {
+                reject()
+            }
+        })
+    }
+
     const _sendRequestToChannel = () => {
         if (_peer.value) {
             console.log(`Send request to channel ${channelId.value}`)
-            const connection = _peer.value.connect(channelId.value, {
-                reliable: true
-            })
+            const connection = _peer.value.connect(channelId.value)
 
             // connection.on('iceStateChanged', (state) => {
             //     console.log('icestateChanged', state)
@@ -221,5 +237,5 @@ export const useViewerPeer = defineStore('viewer-peer', () => {
         })
     }
 
-    return { selfId, channelId, options, mediaStream, streamKey, connectToChannel, disconnect }
+    return { selfId, channelId, options, mediaStream, streamKey, connectToChannel, sendDisconnectNotificationToChannel }
 })

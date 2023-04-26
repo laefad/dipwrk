@@ -1,14 +1,16 @@
 <script lang="ts" setup>
 const viewerPeer = useViewerPeer()
 
-onBeforeUnmount(() => {
-    // reload to another page in site
-    viewerPeer.disconnect()
-
+onMounted(() => {
     // page exit 
-    window.addEventListener("beforeunload", () => {
-        viewerPeer.disconnect()
+    window.addEventListener("beforeunload", async () => {
+        await viewerPeer.sendDisconnectNotificationToChannel()
     })
+})
+
+onBeforeUnmount(async () => {
+    // reload to another page in site
+    await viewerPeer.sendDisconnectNotificationToChannel()
 })
 </script>
 

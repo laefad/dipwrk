@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const mediaDevicesStore = useMediaDevicesStore()
-const streamerPeer = useStreamerPeerStore()
+const streamerPeer = useStreamerPeer()
 const router = useRouter()
 
 const id = ref("")
@@ -9,7 +9,8 @@ const noMediaStream = ref(false)
 const onStreamStart = async () => {
     if (mediaDevicesStore.stream != null) {
         noMediaStream.value = false
-        await streamerPeer.createPeerWithId(id.value, mediaDevicesStore.stream)
+        streamerPeer.mediaStream = mediaDevicesStore.stream
+        await streamerPeer.createPeerWithId(id.value)
         router.push('/stream/broadcast')
     } else {
         noMediaStream.value = true
