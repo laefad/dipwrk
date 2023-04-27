@@ -108,7 +108,9 @@ export const useViewerPeer = defineStore('viewer-peer', () => {
                     _rootConnection.value = null
                 })
 
-                mediaConnection.answer()
+                mediaConnection.answer(undefined, {
+                    sdpTransform
+                })
                 printState()
 
             })
@@ -193,7 +195,9 @@ export const useViewerPeer = defineStore('viewer-peer', () => {
             console.log(`Viewer call ${leafType} leaf '${leafPeerId}'`)
 
             if (mediaStream.value) {
-                const mediaConnection = _peer.value.call(leafPeerId, mediaStream.value)
+                const mediaConnection = _peer.value.call(leafPeerId, mediaStream.value,{
+                    sdpTransform
+                })
                 _connections[leafType] = mediaConnection
 
                 mediaConnection.on('close', () => {

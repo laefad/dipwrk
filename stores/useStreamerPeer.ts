@@ -195,7 +195,9 @@ export const useStreamerPeer = defineStore('streamer-peer', () => {
             ) {
                 console.log(`Call root peer ${rootPeerId}`)
                 _connectionToRoot.value?.close()
-                _connectionToRoot.value = _peer.value.call(rootPeerId, mediaStream.value)
+                _connectionToRoot.value = _peer.value.call(rootPeerId, mediaStream.value, {
+                    sdpTransform
+                })
 
                 _connectionToRoot.value.on('close', () => {
                     if (_peerTreeDict.value.has(rootPeerId)) {

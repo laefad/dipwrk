@@ -49,18 +49,20 @@ export const useMediaDevicesStore = defineStore('mediadevices', () => {
             getMediaDevices()
 
             // watch media sources and create media stream based on them
-            watch(devices, async () => {
-                if (devices.audioInput != null && devices.videoInput != null) {
+            watch(devices, async (state) => {
+                if (state.audioInput != null && state.videoInput != null) {
+                    console.log(`selected`, state)
                     stream.value = await navigator.mediaDevices.getUserMedia({
                         audio: {
                             deviceId: {
-                                exact: devices.audioInput.deviceId
-                            }
+                                exact: state.audioInput.deviceId
+                            },
+                            ...audioSettings
                         },
                         video: {
                             deviceId: {
-                                exact: devices.videoInput.deviceId
-                            }
+                                exact: state.videoInput.deviceId
+                            },
                         }
                     }) ?? null
                 }
@@ -69,5 +71,8 @@ export const useMediaDevicesStore = defineStore('mediadevices', () => {
         })
     }
 
-    return { mediaIsUnavailable, audioInputs, audioOutputs, videoInputs, devices, stream }
+    return { 
+        mediaIsUnavailable, audioInputs, audioOutputs, videoInputs, stream,
+        devices: toRefs(devices) 
+    }
 })
