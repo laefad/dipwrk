@@ -1,21 +1,16 @@
-export type StreamDevices = {
-    videoInput: MediaDeviceInfo | null
-    audioInput: MediaDeviceInfo | null
-    audioOutput: MediaDeviceInfo | null
-}
+export type ClearedMediaDeviceInfo = Omit<MediaDeviceInfo, 'toJSON'>
 
 export const useMediaDevicesStore = defineStore('mediadevices', () => {
 
-    const audioInputs = ref<MediaDeviceInfo[]>()
-    const videoInputs = ref<MediaDeviceInfo[]>()
-    const audioOutputs = ref<MediaDeviceInfo[]>()
+    const audioInputs = ref<ClearedMediaDeviceInfo[]>([])
+    const videoInputs = ref<ClearedMediaDeviceInfo[]>([])
+    const audioOutputs = ref<ClearedMediaDeviceInfo[]>([])
     const mediaIsUnavailable = ref<boolean>(false)
-    const devices = reactive<StreamDevices>({
-        videoInput: null,
-        audioInput: null,
-        // not used yet
-        audioOutput: null
-    })
+    
+    const selectedVideoInput = ref<ClearedMediaDeviceInfo | null>(null)
+    const selectedAudioInput = ref<ClearedMediaDeviceInfo | null>(null)
+    const selectedAudioOutput = ref<ClearedMediaDeviceInfo | null>(null)
+
     const stream = ref<MediaStream | null>(null)
 
     // TODO need to use navigator.permissions.query 
@@ -33,14 +28,19 @@ export const useMediaDevicesStore = defineStore('mediadevices', () => {
         await checkMediaPermissions()
         const mediaDevices = await navigator.mediaDevices.enumerateDevices()
 
-        videoInputs.value = mediaDevices.filter(mdi => mdi.kind == 'videoinput')
-        audioInputs.value = mediaDevices.filter(mdi => mdi.kind == 'audioinput')
-        audioOutputs.value = mediaDevices.filter(mdi => mdi.kind == 'audiooutput')
+        const exclude = ({
+            deviceId, groupId, kind, label
+        }: MediaDeviceInfo): ClearedMediaDeviceInfo => ({
+            deviceId, groupId, kind, label
+        })
+
+        videoInputs.value = mediaDevices.filter(mdi => mdi.kind == 'videoinput').map(exclude)
+        audioInputs.value = mediaDevices.filter(mdi => mdi.kind == 'audioinput').map(exclude)
+        audioOutputs.value = mediaDevices.filter(mdi => mdi.kind == 'audiooutput').map(exclude)
     }
 
     if (getCurrentInstance()) {
         onMounted(() => {
-
             // Emitted when new device connected or disconnected
             navigator.mediaDevices.addEventListener('devicechange', () => {
                 getMediaDevices()
@@ -49,22 +49,24 @@ export const useMediaDevicesStore = defineStore('mediadevices', () => {
             getMediaDevices()
 
             // watch media sources and create media stream based on them
-            watch(devices, async (state) => {
-                if (state.audioInput != null && state.videoInput != null) {
-                    console.log(`selected`, state)
+            watch([selectedVideoInput, selectedAudioInput], async ([videoInput, audioInput]) => {
+                if (videoInput != null && audioInput != null) {
+                    console.log(`selected`, videoInput, audioInput)
                     stream.value = await navigator.mediaDevices.getUserMedia({
                         audio: {
                             deviceId: {
-                                exact: state.audioInput.deviceId
+                                exact: audioInput.deviceId
                             },
                             ...audioSettings
                         },
                         video: {
                             deviceId: {
-                                exact: state.videoInput.deviceId
+                                exact: videoInput.deviceId
                             },
                         }
                     }) ?? null
+                } else {
+                    stream.value = null
                 }
             })
 
@@ -72,7 +74,9 @@ export const useMediaDevicesStore = defineStore('mediadevices', () => {
     }
 
     return { 
-        mediaIsUnavailable, audioInputs, audioOutputs, videoInputs, stream,
-        devices: toRefs(devices) 
+        mediaIsUnavailable, 
+        audioInputs, audioOutputs, videoInputs, 
+        selectedVideoInput, selectedAudioInput, selectedAudioOutput,
+        stream
     }
 })
