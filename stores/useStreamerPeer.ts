@@ -221,6 +221,13 @@ export const useStreamerPeer = defineStore('streamer-peer', () => {
 
     const disconnect = () => {
         _peer.value?.destroy()
+        // cleanup
+        mediaStream.value = null
+        _connectionToRoot.value = null
+        _peerTreeDict.value = new Map<string, PeerTreeData>()
+        _listener.value = new TreeChangesListener()
+        _peerTree.value = new AvlTree(_listener.value, reversedNumberCompare)
+        _peer.value = null
     }
 
     // Debug only 

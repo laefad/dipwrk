@@ -2,7 +2,11 @@
 import { mdiDice5Outline } from '@mdi/js'
 const viewerPeer = useViewerPeer()
 
+const route = useRoute()
+
 onMounted(() => {
+    viewerPeer.channelId = route.query.channelId as string ?? ''
+
     // page exit 
     window.addEventListener("beforeunload", async () => {
         await viewerPeer.sendDisconnectNotificationToChannel()

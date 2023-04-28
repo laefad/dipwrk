@@ -17,12 +17,19 @@ onBeforeUnmount(() => {
 
 <template>
 <VMain>
-    <VRow class="fill-height" align="center">
+    <VRow>
         <VCol>
             <p class="text-center text-h3">
                 Страница трансляции пира {{ streamerPeer.id }}
             </p>
             <Player :stream="mediaDevicesStore.stream" :key="mediaDevicesStore.stream?.id"/>
+        </VCol>
+    </VRow>
+    <VRow>
+        <VCol align="center">
+            <NuxtLink :to="{path: '/stream/watch', query: {'channelId': streamerPeer.id ?? ''}}">
+                Ссылка на трансляцию
+            </NuxtLink>
         </VCol>
     </VRow>
 </VMain>
