@@ -1,0 +1,9 @@
+node_modules
+
+.env
+prod.env
+
+# temp files 
+demos
+
+dist

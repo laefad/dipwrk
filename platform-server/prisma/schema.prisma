@@ -1,0 +1,54 @@
+// see https://prisma.typegraphql.com/docs/basics/installation#additional-dependencies
+generator typegraphql {
+  provider = "typegraphql-prisma"
+  output   = "../prisma/generated/type-graphql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  avatarImage String?
+  /// @TypeGraphQL.omit(output: true)
+  password    String
+
+  role UserRole
+
+  followers User[] @relation(name: "followers")
+  followed User[] @relation(name: "followers")
+
+  stream Stream?
+}
+
+enum UserRole {
+  user
+  admin
+}
+
+model Stream {
+  id String @id @default(uuid())
+  name String
+
+  streamer User @relation(fields: [userId], references: [id])
+  /// @TypeGraphQL.omit(output: true, input: true)
+  userId String @unique
+
+  category Category @relation(fields: [categoryId], references: [id])
+  /// @TypeGraphQL.omit(output: true, input: true)
+  categoryId String @unique
+}
+
+model Category {
+  id String @id @default(uuid())
+  name String
+
+  streams Stream[]
+}

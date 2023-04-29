@@ -1,0 +1,31 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "moduleResolution": "node",
+        "strict": true,
+        "useDefineForClassFields": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        // "sourceMap": true,
+		// "noImplicitReturns": true,
+		// "noUnusedLocals": true,
+		// "noImplicitOverride": true,
+		// "exactOptionalPropertyTypes": true,
+        "newLine": "lf",
+        "lib": [
+            "esnext", 
+            "esnext.asynciterable"
+        ],
+        "typeRoots": [ 
+            "node_modules/@types",
+        ],
+        "types": [],
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"],
+        }
+    },
+    "include": ["src/**/*.ts", "src/**/*.d.ts"],
+}
