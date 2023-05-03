@@ -6,16 +6,29 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "apollo:fetch:dev": "rover graph fetch dstream@dev > schema.gql",
+    "apollo:fetch": "rover graph fetch dstream@current > schema.gql",
+    "graphql:generate": "graphql-codegen --config codegen.yml"
   },
   "devDependencies": {
+    "@apollo/rover": "0.14.0",
+    "@graphql-codegen/cli": "3.3.1",
+    "@graphql-codegen/typescript": "3.0.4",
+    "@graphql-codegen/typescript-operations": "3.0.4",
+    "@graphql-codegen/typescript-vue-apollo": "3.3.7",
     "@pinia/nuxt": "0.4.8",
     "nuxt": "3.3.2",
     "sass": "1.62.0"
   },
   "dependencies": {
+    "@apollo/client": "3.7.13",
     "@mdi/js": "7.2.96",
+    "@vue/apollo-composable": "4.0.0-beta.4",
+    "@vueuse/core": "10.1.2",
     "eventemitter3": "5.0.0",
+    "graphql": "16.6.0",
+    "graphql-tag": "2.12.6",
     "hls.js": "1.4.0-beta.2",
     "peerjs": "2.0.0-beta.3",
     "pinia": "2.0.34",

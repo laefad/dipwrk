@@ -1,0 +1,17 @@
+mutation login ($data: UserLoginInput!){
+    login(data: $data)
+}
+
+mutation createUser($data: UserCreateInput!) {
+    createOneUser(data: $data) {
+        id
+    }
+}
+
+query currentUser {
+    getCurrentUser {
+        id
+        name
+        role
+    }
+}

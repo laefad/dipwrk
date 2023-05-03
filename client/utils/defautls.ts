@@ -1,3 +1,5 @@
+export const AUTH_TOKEN = 'token'
+
 export const audioSettings: MediaTrackConstraintSet = {
     autoGainControl: false,
     channelCount: 2,

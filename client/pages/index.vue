@@ -11,6 +11,12 @@
                 <VListItem>
                     <NuxtLink to="/stream/watch">Страница просмотра трансляции</NuxtLink>
                 </VListItem>
+                <VListItem>
+                    <NuxtLink to="/auth/login">Войти</NuxtLink>
+                </VListItem>
+                <VListItem>
+                    <NuxtLink to="/auth/registration">Регистрация</NuxtLink>
+                </VListItem>
             </VList>
         </VContainer>
     </VMain>

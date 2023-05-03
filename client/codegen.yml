@@ -1,0 +1,18 @@
+overwrite: true
+schema: schema.gql
+documents: queries/**/*.gql
+generates:
+  queries/generated/index.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-vue-apollo
+    config:
+      constEnums: true
+      immutableTypes: true
+      useTypeImports: true
+      dedupeFragments: true
+      addDocBlocks: false
+      vueCompositionApiImportFrom: "@vue/reactivity"
+      scalars: 
+        DateTime: string
