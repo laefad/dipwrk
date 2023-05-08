@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { mdiDice5Outline } from '@mdi/js'
-const viewerPeer = useViewerPeer()
+const viewerPeer = useViewerPeerStore()
 
 const route = useRoute()
 

@@ -8,7 +8,7 @@ import { Peer } from 'peerjs'
 import { TreeChangesListener } from '@/utils/avl-tree/treeChangesListener'
 import { AvlTree } from '@/utils/avl-tree/tree'
 
-export const useStreamerPeer = defineStore('streamer-peer', () => {
+export const useStreamerPeerStore = defineStore('streamerpeerstore', () => {
 
     const inactivityTime = 10000
 

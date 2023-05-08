@@ -1,41 +1,37 @@
 <script lang="ts" setup>
 import { mdiEyeOff, mdiEye } from '@mdi/js'
-import { useCreateUserMutation } from '~~/queries/generated'
+import { useCreateUserMutation } from '@/queries/generated'
 
+const tokenStore = useTokenStore()
 const authStore = useAuthStore()
 
 const showPassword = ref(false)
 const username = ref("")
 const password = ref("")
 
-const router = useRouter();
+const router = useRouter()
 watch(ref(authStore.authenticated), () => {
   if (authStore.authenticated) 
-    router.back()
-});
+    router.push({path: '/'})
+})
 
-const createUserMutation = useCreateUserMutation({});
-const loading = computed(() => createUserMutation.loading.value);
-
-const registerError = ref("");
+const {
+    mutate: createUserMutate,
+    loading,
+    error,
+} = useCreateUserMutation({})
 
 const onRegister = async () => {
-  registerError.value = "";
+    const result = await createUserMutate({
+        data: {
+            name: username.value,
+            password: password.value
+        }
+    })
 
-  const result = await createUserMutation.mutate({
-    data: {
-      name: username.value,
-      password: password.value
+    if (result?.data?.createOneUser?.id ?? "" != "") {
+        tokenStore.fetchNewToken({username, password})
     }
-  }).catch(e => {
-    registerError.value = e.message;
-  })
-
-  if (result?.data?.createOneUser?.id ?? "" != "") {
-    authStore.fetchNewToken({username, password});
-    registerError.value = "";
-  }
-
 }
 </script>
 

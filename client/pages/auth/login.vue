@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import { mdiEyeOff, mdiEye } from '@mdi/js'
 
-const authStore = useAuthStore()
+const tokenStore = useTokenStore()
 
 const showPassword = ref(false)
 const username = ref("")
 const password = ref("")
 
 const onLogin = () => {
-    authStore.fetchNewToken({
+    tokenStore.fetchNewToken({
         username,
         password
     })
@@ -27,7 +27,7 @@ const onLogin = () => {
                         v-model="username"
                         label="Имя пользователя"
                         placeholder="Введите имя пользователя"
-                        :loading="authStore.tokenLoading"
+                        :loading="tokenStore.loading"
                     ></VTextField>
                 </VCol>
             </VRow>
@@ -40,7 +40,7 @@ const onLogin = () => {
                         v-model="password"
                         label="Пароль"
                         placeholder="Введите пароль"
-                        :loading="authStore.tokenLoading"
+                        :loading="tokenStore.loading"
                     ></VTextField>
                 </VCol>
                 <VCol align="center">
@@ -48,7 +48,7 @@ const onLogin = () => {
                         v-model="showPassword"
                         :true-icon="mdiEyeOff"
                         :false-icon="mdiEye"
-                        :loading="authStore.tokenLoading"
+                        :loading="tokenStore.loading"
                     ></VCheckbox>
                 </VCol>
             </VRow>
@@ -56,7 +56,7 @@ const onLogin = () => {
                 <VCol cols="12">
                     <VBtn
                         @click="onLogin"
-                        :loading="authStore.tokenLoading"
+                        :loading="tokenStore.loading"
                     >
                         Войти
                     </VBtn>

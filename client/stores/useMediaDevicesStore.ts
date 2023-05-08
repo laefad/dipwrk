@@ -1,6 +1,6 @@
 export type ClearedMediaDeviceInfo = Omit<MediaDeviceInfo, 'toJSON'>
 
-export const useMediaDevicesStore = defineStore('mediadevices', () => {
+export const useMediaDevicesStore = defineStore('mediadevicesstore', () => {
 
     const audioInputs = ref<ClearedMediaDeviceInfo[]>([])
     const videoInputs = ref<ClearedMediaDeviceInfo[]>([])

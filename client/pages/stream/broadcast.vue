@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const mediaDevicesStore = useMediaDevicesStore()
-const streamerPeer = useStreamerPeer()
+const streamerPeer = useStreamerPeerStore()
 const router = useRouter()
 
 onMounted(() => {

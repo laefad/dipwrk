@@ -5,7 +5,7 @@ import type { MediaConnection, PeerJSOption } from 'peerjs'
 // Util
 import { Peer } from 'peerjs'
 
-export const useViewerPeer = defineStore('viewer-peer', () => {
+export const useViewerPeerStore = defineStore('viewerpeerstore', () => {
 
     const _peer = ref<Peer | null>()
 
