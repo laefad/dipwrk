@@ -3,6 +3,8 @@ import { DefaultApolloClient, provideApolloClient } from '@vue/apollo-composable
 import { setContext } from '@apollo/client/link/context'
 import { useLocalStorage } from '@vueuse/core'
 
+// TODO need to fix SSR 
+
 // part taken from my old implementation 
 // https://github.com/laefad/fedora-books-frontend/blob/master/src/plugins/apolloClient.ts
 // 

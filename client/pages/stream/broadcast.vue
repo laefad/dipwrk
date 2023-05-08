@@ -1,10 +1,16 @@
 <script lang="ts" setup>
 import { mdiDice5Outline } from '@mdi/js'
 
+definePageMeta({
+    middleware: 'auth'
+})
+
 const mediaDevicesStore = useMediaDevicesStore()
 const streamerPeer = useStreamerPeerStore()
+const authStore = useAuthStore()
 const appBarStore = useAppBarStore()
 const appAlertsStore = useAppAlertsStore()
+const router = useRouter()
 
 const id = ref("")
 const noMediaStream = ref(false)

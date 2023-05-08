@@ -4,7 +4,7 @@ export type Alert = {
     text: string
 }
 
-const ALERTS_FADE_TIME = 5000
+const ALERTS_FADE_TIME = 10000
 
 export const useAppAlertsStore = defineStore('appalertsstore', () => {
     const alerts = ref<Array<Alert>>([])

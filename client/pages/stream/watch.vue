@@ -1,6 +1,10 @@
 <script lang="ts" setup>
 import { mdiDice5Outline } from '@mdi/js'
 
+definePageMeta({
+    middleware: 'auth'
+})
+
 const viewerPeer = useViewerPeerStore()
 const appBarStore = useAppBarStore()
 
