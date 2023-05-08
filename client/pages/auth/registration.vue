@@ -42,53 +42,45 @@ const onRegister = async () => {
 </script>
 
 <template>
-<VMain>
-    <VContainer class="fill-height">
-        <VCol>
-            <VRow>
-                <VCol>
-                    <VTextField
-                        density="comfortable"
-                        hide-details
-                        v-model="username"
-                        label="Имя пользователя"
-                        placeholder="Введите имя пользователя"
-                        :loading="loading"
-                    ></VTextField>
-                </VCol>
-            </VRow>
-            <VRow>
-                <VCol>
-                    <VTextField
-                        :type="showPassword ? 'text' : 'password'"
-                        density="comfortable"
-                        hide-details
-                        v-model="password"
-                        label="Пароль"
-                        placeholder="Введите пароль"
-                        :loading="loading"
-                    ></VTextField>
-                </VCol>
-                <VCol align="center">
-                    <VCheckbox
-                        v-model="showPassword"
-                        :true-icon="mdiEyeOff"
-                        :false-icon="mdiEye"
-                        :loading="loading"
-                    ></VCheckbox>
-                </VCol>
-            </VRow>
-            <VRow>
-                <VCol cols="12">
-                    <VBtn
-                        @click="onRegister"
-                        :loading="loading"
-                    >
-                        Зарегестрироваться 
-                    </VBtn>
-                </VCol>
-            </VRow>
+<VContainer class="fill-height">
+    <VRow>
+        <VCol cols="12">
+            <VTextField
+                density="comfortable"
+                hide-details
+                v-model="username"
+                label="Имя пользователя"
+                placeholder="Введите имя пользователя"
+                :loading="loading"
+            />
         </VCol>
-    </VContainer>
-</VMain>    
+        <VCol cols="11">
+            <VTextField
+                :type="showPassword ? 'text' : 'password'"
+                density="comfortable"
+                hide-details
+                v-model="password"
+                label="Пароль"
+                placeholder="Введите пароль"
+                :loading="loading"
+            />
+        </VCol>
+        <VCol cols="1">
+            <VCheckbox
+                v-model="showPassword"
+                :true-icon="mdiEyeOff"
+                :false-icon="mdiEye"
+                :loading="loading"
+            />
+        </VCol>
+        <VCol cols="12" align="center">
+            <VBtn
+                @click="onRegister"
+                :loading="loading"
+                variant="outlined"
+                text="Зарегистрироваться"
+            />
+        </VCol>
+    </VRow>
+</VContainer>   
 </template>

@@ -1,10 +1,9 @@
 // Types
-import type { PeerJSOption, MediaConnection } from 'peerjs'
+import type { Peer, PeerJSOption, MediaConnection } from 'peerjs'
 import type { PeerMessage, Leaf } from '@/utils/peerMessage'
 import type { PeerTreeData } from '@/utils/avl-tree/peerTreeData'
 
 // Utils
-import { Peer } from 'peerjs'
 import { TreeChangesListener } from '@/utils/avl-tree/treeChangesListener'
 import { AvlTree } from '@/utils/avl-tree/tree'
 
@@ -45,6 +44,8 @@ export const useStreamerPeerStore = defineStore('streamerpeerstore', () => {
     const _createPeerJs = async (id: string, options: PeerJSOption) => {
         if (_peer.value)
             _peer.value.destroy()
+
+        const Peer = await (await import('peerjs')).Peer
 
         _peer.value = new Peer(id, options)
         _setupPeer()

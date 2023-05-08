@@ -31,28 +31,25 @@ const generateUUID = () => {
 </script>
 
 <template>
-<VMain>
-    <VRow class="fill-height" align="center">
-        <VCol>
-            <VTextField
-                label="введите ваш id"
-                :append-icon="mdiDice5Outline"
-                @click:append="generateUUID()"
-                v-model="viewerPeer.selfId"
-            ></VTextField>
-            <VTextField
-                label="введите id стрима"
-                v-model="viewerPeer.channelId"
-            ></VTextField>
-            <VBtn
-                @click="viewerPeer.connectToChannel"
-            >
-                Подключиться
-            </VBtn>
-        </VCol>
-        <VCol>
-            <Player :stream="viewerPeer.mediaStream" :key="viewerPeer.streamKey"/>
-        </VCol>
-    </VRow>
-</VMain>
+<VRow class="fill-height" align="center">
+    <VCol>
+        <VTextField
+            label="введите ваш id"
+            :append-icon="mdiDice5Outline"
+            @click:append="generateUUID()"
+            v-model="viewerPeer.selfId"
+        />
+        <VTextField
+            label="введите id стрима"
+            v-model="viewerPeer.channelId"
+        />
+        <VBtn
+            @click="viewerPeer.connectToChannel"
+            text="Подключиться"
+        />
+    </VCol>
+    <VCol>
+        <Player :stream="viewerPeer.mediaStream" :key="viewerPeer.streamKey"/>
+    </VCol>
+</VRow>
 </template>

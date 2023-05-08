@@ -1,9 +1,6 @@
 // Types
 import type { Leaf, PeerMessage } from '@/utils/peerMessage'
-import type { MediaConnection, PeerJSOption } from 'peerjs'
-
-// Util
-import { Peer } from 'peerjs'
+import type { Peer, MediaConnection, PeerJSOption } from 'peerjs'
 
 export const useViewerPeerStore = defineStore('viewerpeerstore', () => {
 
@@ -71,6 +68,8 @@ export const useViewerPeerStore = defineStore('viewerpeerstore', () => {
         // Destroy previous peer 
         if (_peer.value)
             _peer.value.destroy()
+
+        const Peer = await (await import('peerjs')).Peer
 
         _peer.value = new Peer(id, options)
     }

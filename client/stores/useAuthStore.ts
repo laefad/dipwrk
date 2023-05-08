@@ -16,8 +16,10 @@ export const useAuthStore = defineStore('authstore', () => {
     } = useCurrentUserQuery()
 
     // Watch token changes and refetch current user
-    watch(token, () => {
-        refetchUser()
+    onMounted(() => {
+        watch(token, () => {
+            refetchUser()
+        })
     })
 
     const currentUser = computed(() => userResult.value?.getCurrentUser ?? null)

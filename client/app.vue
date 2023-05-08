@@ -1,6 +1,9 @@
 <template>
   <VApp>
     <AppBar/>
-    <NuxtPage/>
+    <VMain>
+      <AppAlerts/>
+      <NuxtPage/>
+    </VMain>
   </VApp>
 </template>

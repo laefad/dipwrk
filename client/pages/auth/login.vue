@@ -21,53 +21,45 @@ const onLogin = () => {
 </script>
 
 <template>
-<VMain>
-    <VContainer class="fill-height">
-        <VCol>
-            <VRow>
-                <VCol>
-                    <VTextField
-                        density="comfortable"
-                        hide-details
-                        v-model="username"
-                        label="Имя пользователя"
-                        placeholder="Введите имя пользователя"
-                        :loading="tokenStore.loading"
-                    ></VTextField>
-                </VCol>
-            </VRow>
-            <VRow>
-                <VCol>
-                    <VTextField
-                        :type="showPassword ? 'text' : 'password'"
-                        density="comfortable"
-                        hide-details
-                        v-model="password"
-                        label="Пароль"
-                        placeholder="Введите пароль"
-                        :loading="tokenStore.loading"
-                    ></VTextField>
-                </VCol>
-                <VCol align="center">
-                    <VCheckbox
-                        v-model="showPassword"
-                        :true-icon="mdiEyeOff"
-                        :false-icon="mdiEye"
-                        :loading="tokenStore.loading"
-                    ></VCheckbox>
-                </VCol>
-            </VRow>
-            <VRow>
-                <VCol cols="12">
-                    <VBtn
-                        @click="onLogin"
-                        :loading="tokenStore.loading"
-                    >
-                        Войти
-                    </VBtn>
-                </VCol>
-            </VRow>
+<VContainer class="fill-height">
+    <VRow>
+        <VCol cols="12">
+            <VTextField
+                density="comfortable"
+                hide-details
+                v-model="username"
+                label="Имя пользователя"
+                placeholder="Введите имя пользователя"
+                :loading="tokenStore.loading"
+            />
         </VCol>
-    </VContainer>
-</VMain>    
+        <VCol cols="11">
+            <VTextField
+                :type="showPassword ? 'text' : 'password'"
+                density="comfortable"
+                hide-details
+                v-model="password"
+                label="Пароль"
+                placeholder="Введите пароль"
+                :loading="tokenStore.loading"
+            />
+        </VCol>
+        <VCol cols="1">
+            <VCheckbox
+                v-model="showPassword"
+                :true-icon="mdiEyeOff"
+                :false-icon="mdiEye"
+                :loading="tokenStore.loading"
+            />
+        </VCol>
+        <VCol cols="12" align="center">
+            <VBtn
+                @click="onLogin"
+                :loading="tokenStore.loading"
+                variant="outlined"
+                text="Войти"
+            />
+        </VCol>
+    </VRow>
+</VContainer>  
 </template>
