@@ -1,0 +1,19 @@
+query getStreams(
+  $where: StreamWhereInput, 
+  $take: Int, 
+  $skip: Int, 
+  $orderBy: [StreamOrderByWithRelationInput!]
+) {
+    streams(where: $where, take: $take, skip: $skip, orderBy: $orderBy) {
+        id
+        name
+        category {
+            id
+            name
+        }
+        streamer {
+            id
+            name
+        }
+    }
+}

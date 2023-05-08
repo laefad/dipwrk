@@ -4,15 +4,21 @@ import { useCreateUserMutation } from '@/queries/generated'
 
 const tokenStore = useTokenStore()
 const authStore = useAuthStore()
+const appBarStore = useAppBarStore()
 
 const showPassword = ref(false)
 const username = ref("")
 const password = ref("")
 
 const router = useRouter()
-watch(ref(authStore.authenticated), () => {
-  if (authStore.authenticated) 
-    router.push({path: '/'})
+
+onMounted(() => {
+    appBarStore.title = "Регистрация"
+
+    watch(ref(authStore.authenticated), () => {
+        if (authStore.authenticated) 
+            router.push({path: '/'})
+    })
 })
 
 const {

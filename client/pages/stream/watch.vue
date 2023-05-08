@@ -1,11 +1,14 @@
 <script lang="ts" setup>
 import { mdiDice5Outline } from '@mdi/js'
+
 const viewerPeer = useViewerPeerStore()
+const appBarStore = useAppBarStore()
 
 const route = useRoute()
 
 onMounted(() => {
     viewerPeer.channelId = route.query.channelId as string ?? ''
+    appBarStore.title = `Просмотр трянсляции ${viewerPeer.channelId}`
 
     // page exit 
     window.addEventListener("beforeunload", async () => {

@@ -2,10 +2,15 @@
 import { mdiEyeOff, mdiEye } from '@mdi/js'
 
 const tokenStore = useTokenStore()
+const appBarStore = useAppBarStore()
 
 const showPassword = ref(false)
 const username = ref("")
 const password = ref("")
+
+onMounted(() => {
+    appBarStore.title = "Вход"
+})
 
 const onLogin = () => {
     tokenStore.fetchNewToken({

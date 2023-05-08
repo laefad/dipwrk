@@ -4,7 +4,9 @@ import { storeToRefs } from 'pinia'
 
 export const useAuthStore = defineStore('authstore', () => {
 
-    const { token } = storeToRefs(useTokenStore())
+    const tokenStore = useTokenStore()
+    const { resetToken: exit } = tokenStore
+    const { token } = storeToRefs(tokenStore)
 
     const {
         result: userResult,
@@ -25,6 +27,7 @@ export const useAuthStore = defineStore('authstore', () => {
         authenticated,
         currentUser,
         loading,
-        error
+        error,
+        exit
     }
 })
