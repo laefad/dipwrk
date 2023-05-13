@@ -37,7 +37,7 @@ export default defineNuxtPlugin(nuxtApp => {
         link: authLink.concat(httpLink),
         cache: new InMemoryCache()
     })
-  
+
     if (process.server) {
       nuxtApp.hook('app:rendered', () => {
         nuxtApp.payload.data.apollo = apolloClient.extract()

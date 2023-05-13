@@ -43,11 +43,15 @@ const onStreamStart = async () => {
         appBarStore.title = 'Настройка прямого эфира'
     }
 }
+
+// id стрима это id стримерского пира 
+// Этот id мы получаем после создания стрима и лишь потом запускаем медиа-поток
+
 </script>
 
 <template>
 <VRow class="fill-height" align="center">
-    <VCol>
+    <VCol cols="6">
         <StreamDeviceSelector />
         <VContainer fluid>
             <VTextField
@@ -65,7 +69,7 @@ const onStreamStart = async () => {
             />
         </VRow>
     </VCol>
-    <VCol>
+    <VCol cols="6">
         <p class="text-center text-h3">
             Предпросмотр
         </p>
