@@ -9,13 +9,14 @@ export default defineNuxtPlugin(nuxtApp => {
     uri: 'http://localhost:5000/graphql'
   })
 
+  const token = useLocalStorage(AUTH_TOKEN, '')
+
   const authLink = setContext((_, { headers }) => {
       // return the headers to the context so httpLink can read them
-      const token = localStorage.getItem(AUTH_TOKEN)
       return {
           headers: {
               ...headers,
-              authorization: token ? `Bearer ${token}` : "",
+              authorization: token.value ? `Bearer ${token.value}` : "",
           }
       }
   })

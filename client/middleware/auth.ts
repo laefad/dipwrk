@@ -3,6 +3,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     if (process.server) return
 
     const authStore = useAuthStore()
+    const router = useRouter()
 
     if (!authStore.authenticated) {
         const appAlertsStore = useAppAlertsStore()
@@ -11,7 +12,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
             text: 'Вы должны быть аутенфицированы, чтобы начать прямой эфир'
         })
 
-        return navigateTo('/auth/login')
+        router.push('/auth/login')
     }
 
 })

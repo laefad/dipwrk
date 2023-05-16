@@ -24,8 +24,8 @@ onMounted(() => {
         >
             <p class="text-h5 text-center">На текущий момент нет активных трансляций</p>
         </VCol>
-
         <VCol
+            v-else
             v-for="stream in streams"
             cols="3"
         >
