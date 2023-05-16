@@ -9,20 +9,22 @@ export const useAuthStore = defineStore('authstore', () => {
     const { token } = storeToRefs(tokenStore)
 
     const {
-        result: userResult,
+        result,
         loading,
         error,
-        refetch: refetchUser
+        refetch: refetchUser,
     } = useCurrentUserQuery()
 
     // Watch token changes and refetch current user
-    onMounted(() => {
-        watch(token, () => {
-            refetchUser()
+    if (getCurrentInstance()) {
+        onMounted(() => {
+            watch(token, async () => {
+                refetchUser()
+            })
         })
-    })
+    }
 
-    const currentUser = computed(() => userResult.value?.getCurrentUser ?? null)
+    const currentUser = computed(() => result.value?.getCurrentUser ?? null)
     const authenticated = computed(() => currentUser.value != null)
 
     return {

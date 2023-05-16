@@ -40,14 +40,14 @@ export class UserLoginResolver {
         try {
             const { id } = getUser(token)
             // TODO I dont remember what this code is doing...
-            const { _count } = transformInfoIntoPrismaArgs(
-                graphqlFields(info as any)
-            )
+            // const { _count } = transformInfoIntoPrismaArgs(
+            //     graphqlFields(info as any)
+            // )
             return prisma.user.findUnique({
                 where: {
                     id: id
                 },
-                ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+                // ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
             })
         } catch {
             return null
