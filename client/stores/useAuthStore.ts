@@ -1,5 +1,5 @@
 // Composables
-import { useCurrentUserQuery } from '@/queries/generated'
+import { CurrentUserQuery, useCurrentUserLazyQuery } from '@/queries/generated'
 import { storeToRefs } from 'pinia'
 
 export const useAuthStore = defineStore('authstore', () => {
@@ -9,22 +9,35 @@ export const useAuthStore = defineStore('authstore', () => {
     const { token } = storeToRefs(tokenStore)
 
     const {
-        result,
         loading,
         error,
         refetch: refetchUser,
-    } = useCurrentUserQuery()
+        load,
+        onResult
+    } = useCurrentUserLazyQuery()
+
+    const user = ref<CurrentUserQuery['getCurrentUser'] | null>(null)
 
     // Watch token changes and refetch current user
     if (getCurrentInstance()) {
         onMounted(() => {
-            watch(token, async () => {
-                refetchUser()
+            load()
+            onResult((query) => {
+                user.value = query.data?.getCurrentUser ?? null
+            })
+            watch(token, (newToken) => {
+                if (!newToken || newToken == '') {
+                    user.value = null
+                } else {
+                    refetchUser()?.then((query) => {
+                        user.value = query.data?.getCurrentUser ?? null
+                    })
+                }
             })
         })
     }
 
-    const currentUser = computed(() => result.value?.getCurrentUser ?? null)
+    const currentUser = computed(() => user.value)
     const authenticated = computed(() => currentUser.value != null)
 
     return {

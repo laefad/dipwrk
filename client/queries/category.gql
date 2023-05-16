@@ -1,0 +1,11 @@
+query getAllCategories(
+  $where: CategoryWhereInput, 
+  $take: Int, 
+  $skip: Int, 
+  $orderBy: [CategoryOrderByWithRelationInput!]
+) {
+    categories (where: $where, take: $take, skip: $skip, orderBy: $orderBy){
+        id
+        name
+    } 
+}

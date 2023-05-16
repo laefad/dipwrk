@@ -1,4 +1,10 @@
 <script lang="ts" setup>
+// types
+import type { Category } from '@/queries/generated'
+import { SortOrder } from '@/queries/generated'
+// composables
+import { useEndStreamMutation, useStartStreamMutation, useGetAllCategoriesQuery } from '@/queries/generated'
+
 import { mdiDice5Outline } from '@mdi/js'
 
 definePageMeta({
@@ -7,45 +13,90 @@ definePageMeta({
 
 const mediaDevicesStore = useMediaDevicesStore()
 const streamerPeer = useStreamerPeerStore()
-const authStore = useAuthStore()
+const { currentUser } = toRefs(useAuthStore())
 const appBarStore = useAppBarStore()
 const appAlertsStore = useAppAlertsStore()
-const router = useRouter()
+const uuidGenerator = ref(new UUID())
 
-const id = ref("")
-const noMediaStream = ref(false)
-const uuid = ref(new UUID())
+const {
+    mutate: startStreamMutate
+} = useStartStreamMutation()
+
+const {
+    mutate: stopStreamMutate
+} = useEndStreamMutation()
+
+const {
+    result: categoriesQueryResult,
+} = useGetAllCategoriesQuery({
+    orderBy: {
+        name: SortOrder.Asc
+    } 
+})
+
+const uuid = ref(uuidGenerator.value.generate())
+const streamName = ref('')
+const category = ref<Pick<Category, '__typename' | 'id' | 'name'> | undefined>(undefined)
+const online = ref(false)
+
+const categories = computed(() => categoriesQueryResult.value?.categories ?? [])
+const id = computed(() => `${currentUser.value!.id}:${uuid.value}`)
 
 const generateUUID = () => {
-    id.value = uuid.value.generate()
+    uuid.value = uuidGenerator.value.generate()
 }
 
 onMounted(() => {
-    appBarStore.title = 'Настройка прямого эфира'
+    watch(online, (isOnline) => {
+        if (isOnline) {
+            appBarStore.title = 'Прямой эфир'
+        } else {
+            appBarStore.title = 'Настройка прямого эфира'
+        }
+    }, {
+        immediate: true
+    })
 })
 
 onBeforeUnmount(() => {
-    streamerPeer.disconnect()
+    onStreamEnd()
 })
+
+const onStreamEnd = () => {
+    streamerPeer.disconnect()
+    stopStreamMutate({where: {
+        id: id.value
+    }})
+    online.value = false
+}
 
 const onStreamStart = async () => {
     if (mediaDevicesStore.stream != null) {
-        noMediaStream.value = false
         streamerPeer.mediaStream = mediaDevicesStore.stream
         await streamerPeer.createPeerWithId(id.value)
-        appBarStore.title = 'Прямой эфир'
+        startStreamMutate({data: {
+            id: id.value,
+            name: streamName.value,
+            streamer: {
+                connect: {
+                    id: currentUser.value!.id 
+                }
+            },
+            category: {
+                connect: {
+                    id: category.value!.id
+                }
+            }
+        }})
+        online.value = true
     } else {
-        noMediaStream.value = true
         appAlertsStore.addAlert({
             type: 'error',
             text: 'Отсутствует медиа-поток, проверьте выбраны ли медиа-устройства.'
         })
-        appBarStore.title = 'Настройка прямого эфира'
+        online.value = false
     }
 }
-
-// id стрима это id стримерского пира 
-// Этот id мы получаем после создания стрима и лишь потом запускаем медиа-поток
 
 </script>
 
@@ -58,11 +109,34 @@ const onStreamStart = async () => {
                 v-model="id"
                 :append-icon="mdiDice5Outline"
                 @click:append="generateUUID()"
-                label="Введите свой индентификатор"
+                label="Ваш индентификатор"
+                placeholder="Введите свой индентификатор"
+                disabled
+            />
+            <VTextField
+                v-model="streamName"
+                label="Название трансляции"
+                placeholder="Введите название трансляции"
+            />
+            <VSelect
+                :items="categories"
+                v-model="category"
+                item-title="name"
+                item-value="id"
+                label="Категория трансляции"
+                placeholder="Введите категорию трансляции"
+                return-object
             />
         </VContainer>
         <VRow justify="center">
+            <VBtn
+                v-if="online"
+                color="red"
+                @click="onStreamEnd"
+                text="Закончить трансляцию"
+            />
             <VBtn 
+                v-else
                 color="green" 
                 @click="onStreamStart"
                 text="Начать трансляцию"

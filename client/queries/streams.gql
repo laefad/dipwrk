@@ -17,3 +17,15 @@ query getStreams(
         }
     }
 }
+
+mutation startStream($data: StreamCreateInput!) {
+    createOneStream(data: $data) {
+        id
+    }
+}
+
+mutation endStream($where: StreamWhereUniqueInput!) {
+    deleteOneStream(where: $where) {
+        id
+    }
+}

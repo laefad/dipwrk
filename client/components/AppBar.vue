@@ -16,6 +16,11 @@ const appBarStore = useAppBarStore()
             to="/stream/broadcast"
             text="Начать трансляцию"
         />
+        <VBtn
+            v-if="authStore.authenticated"
+            to="/stream/watch"
+            text="Смотреть трансляцию"
+        />
 
         <VSpacer/>
         <VAppBarTitle 

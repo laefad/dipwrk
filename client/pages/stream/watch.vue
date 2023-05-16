@@ -7,11 +7,13 @@ definePageMeta({
 
 const viewerPeer = useViewerPeerStore()
 const appBarStore = useAppBarStore()
+const authStore = useAuthStore()
 
 const route = useRoute()
 
 onMounted(() => {
     viewerPeer.channelId = route.query.channelId as string ?? ''
+    viewerPeer.selfId = `${authStore.currentUser!.id}:${uuid.value.generate()}`
     appBarStore.title = `Просмотр трянсляции ${viewerPeer.channelId}`
 
     // page exit 
@@ -38,10 +40,12 @@ const generateUUID = () => {
 <VRow class="fill-height" align="center">
     <VCol>
         <VTextField
-            label="введите ваш id"
+            label="Ваш uuid"
+            placeholder="Введите ваш uuid"
             :append-icon="mdiDice5Outline"
             @click:append="generateUUID()"
             v-model="viewerPeer.selfId"
+            disabled
         />
         <VTextField
             label="введите id стрима"
