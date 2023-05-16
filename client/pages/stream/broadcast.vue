@@ -40,7 +40,7 @@ const category = ref<Pick<Category, '__typename' | 'id' | 'name'> | undefined>(u
 const online = ref(false)
 
 const categories = computed(() => categoriesQueryResult.value?.categories ?? [])
-const id = computed(() => `${currentUser.value!.id}:${uuid.value}`)
+const id = computed(() => `${currentUser.value!.id} ${uuid.value}`)
 
 const generateUUID = () => {
     uuid.value = uuidGenerator.value.generate()

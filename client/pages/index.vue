@@ -29,15 +29,13 @@ onMounted(() => {
             v-for="stream in streams"
             cols="3"
         >
-            <VRow>
+            <VCard
+                :to="{path: '/stream/watch', query: {channelId: stream.id}}"
+            >
                 <p>{{ stream.name }}</p>
-            </VRow>
-            <VRow>
                 <p>{{ stream.category.name }}</p>
-            </VRow>
-            <VRow>
                 <p>{{ stream.streamer.name }}</p>
-            </VRow>
+            </VCard>
         </VCol>
     </VRow>
 </VContainer>

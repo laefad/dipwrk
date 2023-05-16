@@ -26,6 +26,7 @@ export const useStreamerPeerStore = defineStore('streamerpeerstore', () => {
 
     // Getters/setters
 
+    // MUST be valid with https://github.com/peers/peerjs/blob/2a816c1356228c058188274d96ed28f9dabb3f8b/lib/util.ts#L121 
     const id = computed(() => _peer.value?.id ?? null)
     const destroyed = computed(() => _peer.value?.destroyed ?? true)
 

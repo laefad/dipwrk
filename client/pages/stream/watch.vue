@@ -8,12 +8,15 @@ definePageMeta({
 const viewerPeer = useViewerPeerStore()
 const appBarStore = useAppBarStore()
 const authStore = useAuthStore()
+const uuidGenerator = ref(new UUID())
 
 const route = useRoute()
 
+const uuid = ref(uuidGenerator.value.generate())
+
 onMounted(() => {
     viewerPeer.channelId = route.query.channelId as string ?? ''
-    viewerPeer.selfId = `${authStore.currentUser!.id}:${uuid.value.generate()}`
+    viewerPeer.selfId = `${authStore.currentUser!.id} ${uuid.value}`
     appBarStore.title = `Просмотр трянсляции ${viewerPeer.channelId}`
 
     // page exit 
@@ -28,10 +31,8 @@ onBeforeUnmount(async () => {
     viewerPeer.clear()
 })
 
-const uuid = ref(new UUID())
-
 const generateUUID = () => {
-    viewerPeer.selfId = uuid.value.generate()
+    uuid.value = uuidGenerator.value.generate()
 }
 
 </script>
